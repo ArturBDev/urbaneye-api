@@ -1,0 +1,32 @@
+services:
+  urbaneye-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://urbaneye:urbaneye123@postgres:5432/urbaneye
+    restart: always
+  postgres:
+    image: postgres:13.5
+    restart: always
+    environment:
+      - POSTGRES_USER=urbaneye
+      - POSTGRES_PASSWORD=urbaneye123
+      - POSTGRES_DB=urbaneye
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+  adminer:
+    image: adminer:latest # Use the latest Adminer image
+    ports:
+      - '8080:8080' # Map host port 8080 to container port 8080
+    depends_on:
+      - postgres # Ensure the database service starts before Adminer
+    restart: always # Automatically restart Adminer if it stops
+volumes:
+  postgres:
