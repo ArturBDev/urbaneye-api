@@ -58,6 +58,7 @@ async function main() {
       latitude: 10,
       longitude: 10,
       userId: user.id,
+      locationId: location.id,
     },
     update: {
       title: 'Occurrence 1',
@@ -78,6 +79,7 @@ async function main() {
       description: 'Description 1',
       type: 'AUTOMATIC',
       level: 'LOW',
+      occurrenceId: occurrence.id,
     },
     update: {
       title: 'Alert 1',
@@ -87,44 +89,21 @@ async function main() {
     },
   });
 
-  // create a new climate history
-  await prisma.climateHistory.upsert({
+  // create a new interaction
+  await prisma.interaction.upsert({
     where: {
-      id: 'climate-1',
+      userId_occurrenceId: {
+        userId: user.id,
+        occurrenceId: occurrence.id,
+      },
     },
     create: {
-      id: 'climate-1',
-      date: new Date(),
-      temperature: 10,
-      precipitation: 10,
-      humidity: 10,
-      wind: 10,
-      locationId: location.id,
-    },
-    update: {
-      date: new Date(),
-      temperature: 10,
-      precipitation: 10,
-      humidity: 10,
-      wind: 10,
-    },
-  });
-
-  // create a new feedback
-  await prisma.feedback.upsert({
-    where: {
-      id: 'feedback-1',
-    },
-    create: {
-      id: 'feedback-1',
-      description: 'Feedback 1',
-      stillHappening: true,
+      type: 'SUPPORT',
       userId: user.id,
       occurrenceId: occurrence.id,
     },
     update: {
-      description: 'Feedback 1',
-      stillHappening: true,
+      type: 'SUPPORT',
     },
   });
 

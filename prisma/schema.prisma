@@ -13,19 +13,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ---------------------------------------------
-// Models
-// ---------------------------------------------
-model User {
-  id           String       @id @default(cuid())
-  name         String
-  email        String       @unique
-  passwordHash String
-  role         UserRole
-  createdAt    DateTime     @default(now())
-  occurrences  Occurrence[]
-  feedbacks    Feedback[]
-}
+// ----------------------------------------------------
+// ENUMS
+// ----------------------------------------------------
 
 enum UserRole {
   CITIZEN
@@ -33,41 +23,11 @@ enum UserRole {
   COMPANY
 }
 
-model Occurrence {
-  id          String           @id @default(cuid())
-  title       String
-  description String?
-  status      OccurrenceStatus @default(PENDING)
-  imageUrl    String?
-  latitude    Float
-  longitude   Float
-  address     String?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  userId      String
-  user        User             @relation(fields: [userId], references: [id])
-  alerts      Alert[]
-  Feedback    Feedback[]
-}
-
 enum OccurrenceStatus {
   PENDING
   VALIDATED
   RESOLVED
   IGNORED
-}
-
-model Alert {
-  id           String      @id @default(cuid())
-  title        String
-  description  String?
-  type         AlertType
-  level        AlertLevel
-  issuedAt     DateTime    @default(now())
-  latitude     Float?
-  longitude    Float?
-  occurrenceId String?
-  occurrence   Occurrence? @relation(fields: [occurrenceId], references: [id])
 }
 
 enum AlertType {
@@ -82,35 +42,94 @@ enum AlertLevel {
   CRITICAL
 }
 
+enum InteractionType {
+  SUPPORT
+  DISPUTE
+}
+
+// ----------------------------------------------------
+// MODELS
+// ----------------------------------------------------
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole
+  createdAt    DateTime @default(now())
+
+  // Relationships
+  occurrences  Occurrence[]
+  interactions Interaction[]
+}
+
 model Location {
-  id             String           @id @default(cuid())
-  name           String
-  neighborhood   String?
-  city           String
-  state          String
-  latitude       Float
-  longitude      Float
-  climateHistory ClimateHistory[]
+  id           String  @id @default(cuid())
+  name         String
+  neighborhood String?
+  city         String
+  state        String
+  latitude     Float
+  longitude    Float
+
+  // Inverse Relationship
+  occurrences Occurrence[]
 }
 
-model ClimateHistory {
-  id            String   @id @default(cuid())
-  date          DateTime
-  temperature   Float?
-  precipitation Float?
-  humidity      Float?
-  wind          Float?
-  locationId    String
-  location      Location @relation(fields: [locationId], references: [id])
+model Occurrence {
+  id          String           @id @default(cuid())
+  title       String
+  description String?
+  status      OccurrenceStatus @default(PENDING)
+  imageUrl    String?
+  latitude    Float
+  longitude   Float
+  address     String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // Foreign Keys
+  userId     String
+  locationId String?
+
+  // Relationships
+  user         User          @relation(fields: [userId], references: [id])
+  location     Location?     @relation(fields: [locationId], references: [id])
+  alerts       Alert[]
+  interactions Interaction[]
 }
 
-model Feedback {
-  id             String     @id @default(cuid())
-  stillHappening Boolean    @default(true)
-  description    String?
-  createdAt      DateTime   @default(now())
-  userId         String
-  user           User       @relation(fields: [userId], references: [id])
-  occurrenceId   String
-  occurrence     Occurrence @relation(fields: [occurrenceId], references: [id])
+model Alert {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  type        AlertType
+  level       AlertLevel
+  issuedAt    DateTime   @default(now())
+  latitude    Float?
+  longitude   Float?
+
+  // Foreign Key
+  occurrenceId String?
+
+  // Relationships
+  occurrence Occurrence? @relation(fields: [occurrenceId], references: [id])
+}
+
+model Interaction {
+  id        String          @id @default(cuid())
+  type      InteractionType
+  createdAt DateTime        @default(now())
+
+  // Foreign Keys
+  userId       String
+  occurrenceId String
+
+  // Relationships
+  user       User       @relation(fields: [userId], references: [id])
+  occurrence Occurrence @relation(fields: [occurrenceId], references: [id])
+
+  // Unique Constraint: a user can only have one interaction per occurrence
+  @@unique([userId, occurrenceId])
 }
