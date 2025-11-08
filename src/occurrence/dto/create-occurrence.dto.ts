@@ -1,3 +1,5 @@
+import { OccurrenceStatus } from '@prisma/client';
+
 export class CreateOccurrenceDto {
   title: string;
   description: string;
@@ -5,4 +7,7 @@ export class CreateOccurrenceDto {
   longitude: number;
   address: string;
   userId: string;
+  locationId: string;
+  status: OccurrenceStatus;
+  imageUrl: string;
 }

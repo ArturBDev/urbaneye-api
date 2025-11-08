@@ -5,9 +5,8 @@ import { UserModule } from './user/user.module';
 import { OccurrenceModule } from './occurrence/occurrence.module';
 import { AlertModule } from './alert/alert.module';
 import { LocationModule } from './location/location.module';
-import { ClimateHistoryModule } from './climate-history/climate-history.module';
-import { FeedbackModule } from './feedback/feedback.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { InteractionModule } from './interaction/interaction.module';
 
 @Module({
   imports: [
@@ -15,9 +14,8 @@ import { PrismaModule } from './prisma/prisma.module';
     OccurrenceModule,
     AlertModule,
     LocationModule,
-    ClimateHistoryModule,
-    FeedbackModule,
     PrismaModule,
+    InteractionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

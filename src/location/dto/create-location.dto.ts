@@ -1,6 +1,6 @@
 export class CreateLocationDto {
   name: string;
-  neighborhood: string;
+  neighborhood?: string;
   city: string;
   state: string;
   latitude: number;

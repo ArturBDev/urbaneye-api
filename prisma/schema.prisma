@@ -52,84 +52,67 @@ enum InteractionType {
 // ----------------------------------------------------
 
 model User {
-  id           String   @id @default(cuid())
+  id           String        @id @default(cuid())
   name         String
-  email        String   @unique
+  email        String        @unique
   passwordHash String
   role         UserRole
-  createdAt    DateTime @default(now())
-
-  // Relationships
+  createdAt    DateTime      @default(now())
   occurrences  Occurrence[]
   interactions Interaction[]
 }
 
 model Location {
-  id           String  @id @default(cuid())
+  id           String       @id @default(cuid())
   name         String
   neighborhood String?
   city         String
   state        String
   latitude     Float
   longitude    Float
-
-  // Inverse Relationship
-  occurrences Occurrence[]
+  occurrences  Occurrence[]
 }
 
 model Occurrence {
-  id          String           @id @default(cuid())
-  title       String
-  description String?
-  status      OccurrenceStatus @default(PENDING)
-  imageUrl    String?
-  latitude    Float
-  longitude   Float
-  address     String?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-
-  // Foreign Keys
-  userId     String
-  locationId String?
-
-  // Relationships
-  user         User          @relation(fields: [userId], references: [id])
-  location     Location?     @relation(fields: [locationId], references: [id])
+  id           String           @id @default(cuid())
+  title        String
+  description  String?
+  status       OccurrenceStatus @default(PENDING)
+  imageUrl     String?
+  latitude     Float
+  longitude    Float
+  address      String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  userId       String
+  locationId   String?
+  user         User             @relation(fields: [userId], references: [id])
+  location     Location?        @relation(fields: [locationId], references: [id])
   alerts       Alert[]
   interactions Interaction[]
 }
 
 model Alert {
-  id          String     @id @default(cuid())
-  title       String
-  description String?
-  type        AlertType
-  level       AlertLevel
-  issuedAt    DateTime   @default(now())
-  latitude    Float?
-  longitude   Float?
-
-  // Foreign Key
+  id           String      @id @default(cuid())
+  title        String
+  description  String?
+  type         AlertType
+  level        AlertLevel
+  issuedAt     DateTime    @default(now())
+  latitude     Float?
+  longitude    Float?
   occurrenceId String?
-
-  // Relationships
-  occurrence Occurrence? @relation(fields: [occurrenceId], references: [id])
+  occurrence   Occurrence? @relation(fields: [occurrenceId], references: [id])
 }
 
 model Interaction {
-  id        String          @id @default(cuid())
-  type      InteractionType
-  createdAt DateTime        @default(now())
-
-  // Foreign Keys
+  id           String          @id @default(cuid())
+  type         InteractionType
+  createdAt    DateTime        @default(now())
   userId       String
   occurrenceId String
+  user         User            @relation(fields: [userId], references: [id])
+  occurrence   Occurrence      @relation(fields: [occurrenceId], references: [id])
 
-  // Relationships
-  user       User       @relation(fields: [userId], references: [id])
-  occurrence Occurrence @relation(fields: [occurrenceId], references: [id])
-
-  // Unique Constraint: a user can only have one interaction per occurrence
   @@unique([userId, occurrenceId])
 }
