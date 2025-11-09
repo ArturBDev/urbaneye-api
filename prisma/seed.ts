@@ -1,6 +1,7 @@
 // prisma/seed.ts
 
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 // initialize Prisma Client
 const prisma = new PrismaClient();
@@ -14,12 +15,12 @@ async function main() {
     create: {
       name: 'John Doe',
       email: 'john.doe@example.com',
-      passwordHash: 'password',
+      passwordHash: await bcrypt.hash('password', 10),
       role: 'CITIZEN',
     },
     update: {
       name: 'John Doe',
-      passwordHash: 'password',
+      passwordHash: await bcrypt.hash('password', 10),
       role: 'CITIZEN',
     },
   });

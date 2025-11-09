@@ -7,6 +7,14 @@ import { AlertModule } from './alert/alert.module';
 import { LocationModule } from './location/location.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { InteractionModule } from './interaction/interaction.module';
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule, registerAs } from '@nestjs/config';
+
+export default registerAs('config', () => ({
+  database: {
+    url: process.env.DATABASE_URL,
+  },
+}));
 
 @Module({
   imports: [
@@ -16,6 +24,11 @@ import { InteractionModule } from './interaction/interaction.module';
     LocationModule,
     PrismaModule,
     InteractionModule,
+    AuthModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
