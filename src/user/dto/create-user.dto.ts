@@ -7,6 +7,7 @@ import {
   IsEnum,
   MinLength,
   MaxLength,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -29,4 +30,48 @@ export class CreateUserDto {
   @IsNotEmpty()
   @ApiProperty()
   role: UserRole;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  phoneNumber: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  zipCode: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  country: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  state: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  city: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  neighborhood: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  street: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  number: string;
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  complement?: string;
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  reference?: string;
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  profilePicture?: string;
 }

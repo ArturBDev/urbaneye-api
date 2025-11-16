@@ -52,14 +52,25 @@ enum InteractionType {
 // ----------------------------------------------------
 
 model User {
-  id           String        @id @default(cuid())
-  name         String
-  email        String        @unique
-  passwordHash String
-  role         UserRole
-  createdAt    DateTime      @default(now())
-  occurrences  Occurrence[]
-  interactions Interaction[]
+  id             String        @id @default(cuid())
+  name           String
+  email          String        @unique
+  passwordHash   String
+  phoneNumber    String        @default("")
+  zipCode        String        @default("")
+  country        String        @default("")
+  state          String        @default("")
+  city           String        @default("")
+  neighborhood   String        @default("")
+  street         String        @default("")
+  number         String        @default("")
+  complement     String?
+  reference      String?
+  profilePicture String?
+  role           UserRole
+  createdAt      DateTime      @default(now())
+  occurrences    Occurrence[]
+  interactions   Interaction[]
 }
 
 model Location {
@@ -81,11 +92,20 @@ model Occurrence {
   imageUrl     String?
   latitude     Float
   longitude    Float
-  address      String
+  zipCode      String           @default("")
+  country      String           @default("")
+  state        String           @default("")
+  city         String           @default("")
+  neighborhood String           @default("")
+  address      String           @default("")
+  street       String           @default("")
+  number       String           @default("")
+  complement   String?
+  reference    String?
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
   userId       String
-  locationId   String
+  locationId   String           @default("")
   user         User             @relation(fields: [userId], references: [id])
   location     Location?        @relation(fields: [locationId], references: [id])
   alerts       Alert[]

@@ -1,5 +1,4 @@
 import { OccurrenceStatus } from '@prisma/client';
-import { User } from 'src/user/entities/user.entity';
 
 export class Occurrence {
   id: string;
@@ -9,6 +8,15 @@ export class Occurrence {
   imageUrl: string;
   latitude: number;
   longitude: number;
+  zipCode: string;
+  country: string;
+  state: string;
+  city: string;
+  neighborhood: string;
+  street: string;
+  number: string;
+  complement: string;
+  reference: string;
   address: string;
   userId: string;
   locationId: string;

@@ -45,4 +45,40 @@ export class CreateOccurrenceDto {
   @IsOptional()
   @ApiProperty()
   imageUrl?: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  zipCode: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  country: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  state: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  city: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  neighborhood: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  street: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  number: string;
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  complement?: string;
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  reference?: string;
 }
