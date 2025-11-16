@@ -170,9 +170,8 @@ export class OccurrenceController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER)
   @ApiBearerAuth()
-  @Get('user/:userId')
+  @Get('user/')
   @ApiOperation({ summary: 'Get occurrences by user id' })
-  @ApiParam({ name: 'userId', type: String })
   @ApiResponse({
     status: 200,
     description: 'Occurrences retrieved successfully',
@@ -181,19 +180,9 @@ export class OccurrenceController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async getOccurrencesByUser(
-    @Param('userId') userId: string,
     @CurrentUser() currentUser: User,
   ): Promise<Occurrence[]> {
-    if (
-      currentUser.id !== userId &&
-      currentUser.role !== UserRole.SUPER_ADMIN &&
-      currentUser.role !== UserRole.ADMIN
-    ) {
-      throw new ForbiddenException(
-        'You are not authorized to access this resource',
-      );
-    }
-    return await this.occurrenceService.getOccurrencesByUser(userId);
+    return await this.occurrenceService.getOccurrencesByUser(currentUser.id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
