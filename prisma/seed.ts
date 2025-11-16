@@ -1,6 +1,6 @@
 // prisma/seed.ts
 
-import { PrismaClient, UserType } from '@prisma/client';
+import { OccurrenceStatus, PrismaClient, UserType } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 // initialize Prisma Client
@@ -82,7 +82,7 @@ async function main() {
       longitude: -46.6333,
       userId: user.id,
       address: 'Avenida Assis Brasil, 1578',
-      status: 'PENDING',
+      status: OccurrenceStatus.APPROVED,
       imageUrl: 'https://example.com/flooding.jpg',
       responsibleOrganization: 'CORSAN',
       zipCode: '99999-999',

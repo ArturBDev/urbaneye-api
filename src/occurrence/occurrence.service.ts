@@ -1,10 +1,16 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOccurrenceDto } from './dto/create-occurrence.dto';
 import { UpdateOccurrenceDto } from './dto/update-occurrence.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Occurrence } from './entities/occurrence.entity';
 import { OccurrenceFiltersDto } from './dto/occurrence-filters.dto';
-import { OccurrenceStatus } from '@prisma/client';
+import { InteractionType, OccurrenceStatus } from '@prisma/client';
+
+const LAST_HOUR = 1 * 60 * 60 * 1000;
 
 @Injectable()
 export class OccurrenceService {
@@ -199,6 +205,71 @@ export class OccurrenceService {
     } catch (error) {
       throw new InternalServerErrorException(
         'Failed to review occurrence.',
+        error.message,
+      );
+    }
+  }
+
+  async validatesOccurrenceBasedOnNumberOfInteractions(
+    occurrenceId: string,
+  ): Promise<void> {
+    try {
+      const occurrence = await this.findOne(occurrenceId);
+      if (!occurrence) {
+        throw new NotFoundException('Occurrence not found');
+      }
+      const interactions = await this.prisma.interaction.findMany({
+        where: {
+          occurrenceId: occurrenceId,
+        },
+      });
+
+      const supportInteractionsLength =
+        interactions.filter(
+          (interaction) =>
+            interaction.type === InteractionType.SUPPORT &&
+            interaction.createdAt > new Date(Date.now() - LAST_HOUR), // Últimas 2 horas
+        )?.length ?? 0;
+
+      const disputeInteractionsLength =
+        interactions.filter(
+          (interaction) =>
+            interaction.type === InteractionType.DISPUTE &&
+            interaction.createdAt > new Date(Date.now() - LAST_HOUR), // Últimas 2 horas
+        )?.length ?? 0;
+
+      if (supportInteractionsLength >= disputeInteractionsLength) {
+        await this.update(occurrenceId, { status: OccurrenceStatus.APPROVED });
+      } else {
+        await this.update(occurrenceId, { status: OccurrenceStatus.CLOSED });
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to validate occurrence based on number of interactions.',
+        error.message,
+      );
+    }
+  }
+
+  async findApprovedOlderThan(hours: number): Promise<Occurrence[]> {
+    try {
+      const pendingOccurrences = await this.prisma.occurrence.findMany({
+        where: {
+          status: OccurrenceStatus.APPROVED,
+          createdAt: {
+            lt: new Date(Date.now() - hours * 60 * 60 * 1000),
+          },
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+        take: 1000,
+        skip: 0,
+      });
+      return pendingOccurrences;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to fetch pending occurrences.',
         error.message,
       );
     }

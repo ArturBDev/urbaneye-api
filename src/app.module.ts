@@ -9,6 +9,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { InteractionModule } from './interaction/interaction.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, registerAs } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 export default registerAs('config', () => ({
   database: {
@@ -29,6 +30,7 @@ export default registerAs('config', () => ({
       isGlobal: true,
       envFilePath: '.env',
     }),
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],

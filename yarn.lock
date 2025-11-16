@@ -1035,6 +1035,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/schedule@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "@nestjs/schedule@npm:6.0.1"
+  dependencies:
+    cron: 4.3.3
+  peerDependencies:
+    "@nestjs/common": ^10.0.0 || ^11.0.0
+    "@nestjs/core": ^10.0.0 || ^11.0.0
+  checksum: a9e91f70387e4858ba991b7d7e5d7378681ff6c0dbc6bc416c3757fcbb7aa58d0abcdbcd310d91021af4c42f0179a8e18a6ca9215b150767710f4d48ad152556
+  languageName: node
+  linkType: hard
+
 "@nestjs/schematics@npm:^10.0.0, @nestjs/schematics@npm:^10.0.1":
   version: 10.2.3
   resolution: "@nestjs/schematics@npm:10.2.3"
@@ -1553,6 +1565,13 @@ __metadata:
     "@types/ms": "*"
     "@types/node": "*"
   checksum: 370e60879902d769c3dd86dc94cda0bf6149c3514762fa8ed6de873d10de7f0952edf960796a4b89ebc5d81f45abcff21430c1e956b165962ad42c836f3e88c8
+  languageName: node
+  linkType: hard
+
+"@types/luxon@npm:~3.7.0":
+  version: 3.7.1
+  resolution: "@types/luxon@npm:3.7.1"
+  checksum: ec5181716f9a744d2be1a4a72c3509670e1030a9271736d95e9e04af075ac6f24f6b35f2934f6d7eab496c1eefd9f81b572ad63fd33fd17a100eb2b315702a77
   languageName: node
   linkType: hard
 
@@ -3040,6 +3059,16 @@ __metadata:
   version: 1.1.1
   resolution: "create-require@npm:1.1.1"
   checksum: a9a1503d4390d8b59ad86f4607de7870b39cad43d929813599a23714831e81c520bddf61bcdd1f8e30f05fd3a2b71ae8538e946eb2786dc65c2bbc520f692eff
+  languageName: node
+  linkType: hard
+
+"cron@npm:4.3.3":
+  version: 4.3.3
+  resolution: "cron@npm:4.3.3"
+  dependencies:
+    "@types/luxon": ~3.7.0
+    luxon: ~3.7.0
+  checksum: 08294d1813335584b828f1e980ac7655de77aa0963597e04881d6abd48167801abc6a59fa746ae7d8f4a2cd85537f93af31dffb0dd23c436be37e91b5f3bf830
   languageName: node
   linkType: hard
 
@@ -5447,6 +5476,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"luxon@npm:~3.7.0":
+  version: 3.7.2
+  resolution: "luxon@npm:3.7.2"
+  checksum: fc115fd6a7acc2adb7df3476d20c672beb2985d2a034294282f2c31de8c07f29a15460f5a2b7dd0107797be0dab545ddbc64862662b059fb18c1931a726064f4
+  languageName: node
+  linkType: hard
+
 "magic-string@npm:0.30.8":
   version: 0.30.8
   resolution: "magic-string@npm:0.30.8"
@@ -7618,6 +7654,7 @@ __metadata:
     "@nestjs/jwt": ^11.0.1
     "@nestjs/passport": ^11.0.5
     "@nestjs/platform-express": ^10.0.0
+    "@nestjs/schedule": ^6.0.1
     "@nestjs/schematics": ^10.0.0
     "@nestjs/swagger": ^11.2.0
     "@nestjs/testing": ^10.0.0
