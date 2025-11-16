@@ -182,4 +182,25 @@ export class OccurrenceService {
       );
     }
   }
+
+  async occurrenceReview(
+    occurrenceId: string,
+    status: OccurrenceStatus,
+  ): Promise<void> {
+    try {
+      await this.prisma.occurrence.update({
+        where: {
+          id: occurrenceId,
+        },
+        data: {
+          status: status,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to review occurrence.',
+        error.message,
+      );
+    }
+  }
 }

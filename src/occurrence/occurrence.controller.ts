@@ -25,7 +25,7 @@ import {
 import { Occurrence } from './entities/occurrence.entity';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
-import { User, UserRole } from '@prisma/client';
+import { OccurrenceStatus, User, UserRole } from '@prisma/client';
 import { OccurrenceFiltersDto } from './dto/occurrence-filters.dto';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 
@@ -236,6 +236,42 @@ export class OccurrenceController {
       latitude,
       longitude,
       radius,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @ApiBearerAuth()
+  @Post('review/:id')
+  @ApiOperation({ summary: 'Review an occurrence' })
+  @ApiParam({ name: 'id', type: String })
+  @ApiResponse({
+    status: 200,
+    description: 'Occurrence reviewed successfully',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Occurrence not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async occurrenceReview(
+    @Param('id') id: string,
+    @Body() occurrenceReviewDto: { status: OccurrenceStatus },
+    @CurrentUser() currentUser: User,
+  ): Promise<void> {
+    const occurrence = await this.occurrenceService.findOne(id);
+    if (!occurrence) {
+      throw new NotFoundException('Occurrence not found');
+    }
+    if (
+      currentUser.role !== UserRole.SUPER_ADMIN &&
+      currentUser.role !== UserRole.ADMIN
+    ) {
+      throw new ForbiddenException(
+        'You are not authorized to access this resource',
+      );
+    }
+    await this.occurrenceService.occurrenceReview(
+      id,
+      occurrenceReviewDto.status as OccurrenceStatus,
     );
   }
 }
