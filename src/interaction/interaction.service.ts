@@ -1,44 +1,70 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateInteractionDto } from './dto/create-interaction.dto';
 import { UpdateInteractionDto } from './dto/update-interaction.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Interaction } from './entities/interaction.entity';
 
 @Injectable()
 export class InteractionService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createInteractionDto: CreateInteractionDto) {
-    return this.prisma.interaction.create({
-      data: createInteractionDto,
-    });
+  async create(
+    createInteractionDto: CreateInteractionDto,
+  ): Promise<Interaction> {
+    try {
+      return await this.prisma.interaction.create({
+        data: createInteractionDto,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  findAll() {
-    return this.prisma.interaction.findMany();
+  async findAll(): Promise<Interaction[]> {
+    try {
+      return await this.prisma.interaction.findMany();
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  findOne(id: string) {
-    return this.prisma.interaction.findUniqueOrThrow({
-      where: {
-        id: id,
-      },
-    });
+  async findOne(id: string): Promise<Interaction> {
+    try {
+      return await this.prisma.interaction.findUniqueOrThrow({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  update(id: string, updateInteractionDto: UpdateInteractionDto) {
-    return this.prisma.interaction.update({
-      where: {
-        id: id,
-      },
-      data: updateInteractionDto,
-    });
+  async update(
+    id: string,
+    updateInteractionDto: UpdateInteractionDto,
+  ): Promise<Interaction> {
+    try {
+      return await this.prisma.interaction.update({
+        where: {
+          id: id,
+        },
+        data: updateInteractionDto,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  remove(id: string) {
-    return this.prisma.interaction.delete({
-      where: {
-        id: id,
-      },
-    });
+  async remove(id: string): Promise<void> {
+    try {
+      await this.prisma.interaction.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }

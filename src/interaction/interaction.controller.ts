@@ -12,7 +12,14 @@ import { InteractionService } from './interaction.service';
 import { CreateInteractionDto } from './dto/create-interaction.dto';
 import { UpdateInteractionDto } from './dto/update-interaction.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
+import { Interaction } from './entities/interaction.entity';
 
 @Controller('interaction')
 export class InteractionController {
@@ -21,38 +28,93 @@ export class InteractionController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Post()
-  create(@Body() createInteractionDto: CreateInteractionDto) {
-    return this.interactionService.create(createInteractionDto);
+  @ApiBody({ type: CreateInteractionDto })
+  @ApiResponse({
+    status: 201,
+    description: 'The interaction has been successfully created.',
+    type: Interaction,
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 409, description: 'Interaction already exists.' })
+  async create(
+    @Body() createInteractionDto: CreateInteractionDto,
+  ): Promise<Interaction> {
+    return await this.interactionService.create(createInteractionDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get()
-  findAll() {
+  @ApiResponse({
+    status: 200,
+    description: 'The interactions have been successfully retrieved.',
+    type: [Interaction],
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 500, description: 'Internal server error.' })
+  @ApiOperation({ summary: 'Get all interactions' })
+  async findAll(): Promise<Interaction[]> {
     return this.interactionService.findAll();
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.interactionService.findOne(id);
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'The id of the interaction',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The interaction has been successfully retrieved.',
+    type: Interaction,
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'Interaction not found.' })
+  @ApiResponse({ status: 500, description: 'Internal server error.' })
+  @ApiOperation({ summary: 'Get an interaction by id' })
+  async findOne(@Param('id') id: string): Promise<Interaction> {
+    return await this.interactionService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Patch(':id')
-  update(
+  @ApiBody({ type: UpdateInteractionDto })
+  @ApiResponse({
+    status: 200,
+    description: 'The interaction has been successfully updated.',
+    type: Interaction,
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'Interaction not found.' })
+  @ApiResponse({ status: 500, description: 'Internal server error.' })
+  @ApiOperation({ summary: 'Update an interaction' })
+  async update(
     @Param('id') id: string,
     @Body() updateInteractionDto: UpdateInteractionDto,
-  ) {
-    return this.interactionService.update(id, updateInteractionDto);
+  ): Promise<Interaction> {
+    return await this.interactionService.update(id, updateInteractionDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.interactionService.remove(id);
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'The id of the interaction',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The interaction has been successfully deleted.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'Interaction not found.' })
+  @ApiResponse({ status: 500, description: 'Internal server error.' })
+  @ApiOperation({ summary: 'Delete an interaction' })
+  async remove(@Param('id') id: string): Promise<void> {
+    await this.interactionService.remove(id);
   }
 }
