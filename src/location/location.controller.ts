@@ -20,10 +20,16 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { Location } from './entities/location.entity';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { UserRole } from '@prisma/client';
 @Controller('location')
 export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN)
+  @ApiBearerAuth()
   @Post()
   @ApiOperation({ summary: 'Create a new location' })
   @ApiBody({ type: CreateLocationDto })
@@ -40,7 +46,8 @@ export class LocationController {
     return await this.locationService.create(createLocationDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Get()
   @ApiOperation({ summary: 'Get all locations' })
@@ -55,7 +62,8 @@ export class LocationController {
     return await this.locationService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Get(':id')
   @ApiOperation({ summary: 'Get a location by id' })
@@ -72,7 +80,8 @@ export class LocationController {
     return await this.locationService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth()
   @Patch(':id')
   @ApiOperation({ summary: 'Update a location' })
@@ -93,7 +102,8 @@ export class LocationController {
     return await this.locationService.update(id, updateLocationDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN)
   @ApiBearerAuth()
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a location' })

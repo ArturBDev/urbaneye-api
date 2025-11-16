@@ -20,12 +20,16 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { Occurrence } from './entities/occurrence.entity';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { UserRole } from '@prisma/client';
 
 @Controller('occurrence')
 export class OccurrenceController {
   constructor(private readonly occurrenceService: OccurrenceService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Post()
   @ApiOperation({ summary: 'Create a new occurrence' })
@@ -43,7 +47,8 @@ export class OccurrenceController {
     return await this.occurrenceService.create(createOccurrenceDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Get()
   @ApiOperation({ summary: 'Get all occurrences' })
@@ -58,7 +63,8 @@ export class OccurrenceController {
     return await this.occurrenceService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Get(':id')
   @ApiOperation({ summary: 'Get an occurrence by id' })
@@ -79,7 +85,8 @@ export class OccurrenceController {
     return await this.occurrenceService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN)
   @ApiBearerAuth()
   @Patch(':id')
   @ApiOperation({ summary: 'Update an occurrence' })
@@ -104,7 +111,8 @@ export class OccurrenceController {
     return await this.occurrenceService.update(id, updateOccurrenceDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN)
   @ApiBearerAuth()
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an occurrence' })

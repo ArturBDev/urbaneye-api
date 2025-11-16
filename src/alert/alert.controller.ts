@@ -20,12 +20,16 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { Alert } from './entities/alert.entity';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { UserRole } from '@prisma/client';
 
 @Controller('alert')
 export class AlertController {
   constructor(private readonly alertService: AlertService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Post()
   @ApiBody({ type: CreateAlertDto })
@@ -41,7 +45,8 @@ export class AlertController {
     return await this.alertService.create(createAlertDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Get()
   @ApiResponse({
@@ -56,7 +61,8 @@ export class AlertController {
     return await this.alertService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Get(':id')
   @ApiParam({ name: 'id', type: String, description: 'The id of the alert' })
@@ -73,7 +79,8 @@ export class AlertController {
     return await this.alertService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @ApiParam({ name: 'id', type: String, description: 'The id of the alert' })
   @ApiResponse({
@@ -93,7 +100,8 @@ export class AlertController {
     return await this.alertService.update(id, updateAlertDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Delete(':id')
   @ApiParam({ name: 'id', type: String, description: 'The id of the alert' })

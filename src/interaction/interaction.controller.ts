@@ -20,12 +20,16 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { Interaction } from './entities/interaction.entity';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { UserRole } from '@prisma/client';
 
 @Controller('interaction')
 export class InteractionController {
   constructor(private readonly interactionService: InteractionService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Post()
   @ApiBody({ type: CreateInteractionDto })
@@ -43,7 +47,8 @@ export class InteractionController {
     return await this.interactionService.create(createInteractionDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Get()
   @ApiResponse({
@@ -58,7 +63,8 @@ export class InteractionController {
     return this.interactionService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Get(':id')
   @ApiParam({
@@ -79,7 +85,8 @@ export class InteractionController {
     return await this.interactionService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Patch(':id')
   @ApiBody({ type: UpdateInteractionDto })
@@ -99,7 +106,8 @@ export class InteractionController {
     return await this.interactionService.update(id, updateInteractionDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth()
   @Delete(':id')
   @ApiParam({

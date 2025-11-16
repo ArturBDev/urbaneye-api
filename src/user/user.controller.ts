@@ -70,7 +70,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Get(':id')
   @ApiParam({ name: 'id', type: String, description: 'The id of the user' })
@@ -88,7 +88,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Patch(':id')
   @ApiParam({ name: 'id', type: String, description: 'The id of the user' })
@@ -111,7 +111,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Delete(':id')
   @ApiParam({ name: 'id', type: String, description: 'The id of the user' })
