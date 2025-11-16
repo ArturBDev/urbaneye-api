@@ -29,7 +29,7 @@ export class AlertController {
   constructor(private readonly alertService: AlertService) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth()
   @Post()
   @ApiBody({ type: CreateAlertDto })
@@ -46,7 +46,7 @@ export class AlertController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth()
   @Get()
   @ApiResponse({
@@ -62,7 +62,7 @@ export class AlertController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth()
   @Get(':id')
   @ApiParam({ name: 'id', type: String, description: 'The id of the alert' })
@@ -80,7 +80,7 @@ export class AlertController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth()
   @ApiParam({ name: 'id', type: String, description: 'The id of the alert' })
   @ApiResponse({
@@ -101,7 +101,7 @@ export class AlertController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth()
   @Delete(':id')
   @ApiParam({ name: 'id', type: String, description: 'The id of the alert' })

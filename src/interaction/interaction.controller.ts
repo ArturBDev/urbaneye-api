@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InteractionService } from './interaction.service';
 import { CreateInteractionDto } from './dto/create-interaction.dto';
@@ -22,7 +24,8 @@ import {
 import { Interaction } from './entities/interaction.entity';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
-import { UserRole } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
+import { CurrentUser } from 'src/auth/current-user.decorator';
 
 @Controller('interaction')
 export class InteractionController {
@@ -81,8 +84,24 @@ export class InteractionController {
   @ApiResponse({ status: 404, description: 'Interaction not found.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   @ApiOperation({ summary: 'Get an interaction by id' })
-  async findOne(@Param('id') id: string): Promise<Interaction> {
-    return await this.interactionService.findOne(id);
+  async findOne(
+    @Param('id') id: string,
+    @CurrentUser() currentUser: User,
+  ): Promise<Interaction> {
+    const interaction = await this.interactionService.findOne(id);
+    if (!interaction) {
+      throw new NotFoundException('Interaction not found');
+    }
+    if (
+      currentUser.id !== interaction.userId &&
+      currentUser.role !== UserRole.SUPER_ADMIN &&
+      currentUser.role !== UserRole.ADMIN
+    ) {
+      throw new ForbiddenException(
+        'You are not authorized to get this interaction',
+      );
+    }
+    return interaction;
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -102,12 +121,26 @@ export class InteractionController {
   async update(
     @Param('id') id: string,
     @Body() updateInteractionDto: UpdateInteractionDto,
+    @CurrentUser() currentUser: User,
   ): Promise<Interaction> {
+    const interaction = await this.interactionService.findOne(id);
+    if (!interaction) {
+      throw new NotFoundException('Interaction not found');
+    }
+    if (
+      currentUser.id !== interaction.userId &&
+      currentUser.role !== UserRole.SUPER_ADMIN &&
+      currentUser.role !== UserRole.ADMIN
+    ) {
+      throw new ForbiddenException(
+        'You are not authorized to update this interaction',
+      );
+    }
     return await this.interactionService.update(id, updateInteractionDto);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Delete(':id')
   @ApiParam({
@@ -123,7 +156,24 @@ export class InteractionController {
   @ApiResponse({ status: 404, description: 'Interaction not found.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   @ApiOperation({ summary: 'Delete an interaction' })
-  async remove(@Param('id') id: string): Promise<void> {
+  async remove(
+    @Param('id') id: string,
+    @CurrentUser() currentUser: User,
+  ): Promise<void> {
+    const interaction = await this.interactionService.findOne(id);
+    if (!interaction) {
+      throw new NotFoundException('Interaction not found');
+    }
+
+    if (
+      currentUser.id !== interaction.userId &&
+      currentUser.role !== UserRole.SUPER_ADMIN &&
+      currentUser.role !== UserRole.ADMIN
+    ) {
+      throw new ForbiddenException(
+        'You are not authorized to delete this interaction',
+      );
+    }
     await this.interactionService.remove(id);
   }
 }
