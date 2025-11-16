@@ -35,7 +35,7 @@ export class UserService {
       createUserDto.passwordHash = hashedPassword;
 
       return await this.prisma.user.create({
-        data: createUserDto,
+        data: { ...createUserDto },
       });
     } catch (error) {
       throw new InternalServerErrorException(error.message);

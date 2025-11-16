@@ -73,6 +73,7 @@ model User {
   complement     String?
   reference      String?
   profilePicture String?
+  role           UserRole      @default(USER)
   type           UserType
   createdAt      DateTime      @default(now())
   occurrences    Occurrence[]
