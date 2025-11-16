@@ -15,9 +15,9 @@ export class Occurrence {
   neighborhood: string;
   street: string;
   number: string;
-  complement: string;
-  reference: string;
+  complement?: string;
+  responsibleOrganization?: string;
+  reference?: string;
   address: string;
   userId: string;
-  locationId: string;
 }

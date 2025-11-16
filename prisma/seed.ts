@@ -46,7 +46,7 @@ async function main() {
   });
 
   // create a new location
-  const location = await prisma.location.upsert({
+  await prisma.location.upsert({
     where: {
       id: 'location-1',
     },
@@ -57,6 +57,7 @@ async function main() {
       state: 'State 1',
       latitude: 10,
       longitude: 10,
+      neighborhood: 'Neighborhood 1',
     },
     update: {
       name: 'Location 1',
@@ -64,6 +65,7 @@ async function main() {
       state: 'State 1',
       latitude: 10,
       longitude: 10,
+      neighborhood: 'Neighborhood 1',
     },
   });
 
@@ -79,37 +81,38 @@ async function main() {
       latitude: -23.5505,
       longitude: -46.6333,
       userId: user.id,
-      locationId: location.id,
-      address: 'Avenida Paulista, 1578',
+      address: 'Avenida Assis Brasil, 1578',
       status: 'PENDING',
       imageUrl: 'https://example.com/flooding.jpg',
-      zipCode: '01310-200',
+      responsibleOrganization: 'CORSAN',
+      zipCode: '99999-999',
       country: 'BR',
-      state: 'SP',
-      city: 'São Paulo',
+      state: 'RS',
+      city: 'Porto Alegre',
       neighborhood: 'Bela Vista',
-      street: 'Avenida Paulista',
+      street: 'Avenida Assis Brasil',
       number: '1578',
-      complement: 'Next to MASP',
-      reference: 'Near the MASP Museum',
+      complement: 'Next to Wallig',
+      reference: 'Near the Wallig',
     },
     update: {
       title: 'Flooding on Main Street',
       description: 'Heavy rain caused flooding on Main Street',
       latitude: -23.5505,
       longitude: -46.6333,
-      address: 'Avenida Paulista, 1578',
+      address: 'Avenida Assis Brasil, 1578',
       status: 'PENDING',
       imageUrl: 'https://example.com/flooding.jpg',
-      zipCode: '01310-200',
+      responsibleOrganization: 'CORSAN',
+      zipCode: '99999-999',
       country: 'BR',
-      state: 'SP',
-      city: 'São Paulo',
+      state: 'RS',
+      city: 'Porto Alegre',
       neighborhood: 'Bela Vista',
-      street: 'Avenida Paulista',
+      street: 'Avenida Assis Brasil',
       number: '1578',
-      complement: 'Next to MASP',
-      reference: 'Near the MASP Museum',
+      complement: 'Next to Wallig',
+      reference: 'Near the Wallig',
     },
   });
 

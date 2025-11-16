@@ -34,9 +34,9 @@ export class CreateOccurrenceDto {
   @ApiProperty()
   userId: string;
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
-  locationId: string;
+  responsibleOrganization?: string;
   @IsEnum(OccurrenceStatus)
   @IsNotEmpty()
   @ApiProperty()

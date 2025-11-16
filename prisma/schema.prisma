@@ -81,42 +81,40 @@ model User {
 }
 
 model Location {
-  id           String       @id @default(cuid())
+  id           String  @id @default(cuid())
   name         String
   neighborhood String?
   city         String
   state        String
   latitude     Float
   longitude    Float
-  occurrences  Occurrence[]
 }
 
 model Occurrence {
-  id           String           @id @default(cuid())
-  title        String
-  description  String
-  status       OccurrenceStatus @default(PENDING)
-  imageUrl     String?
-  latitude     Float
-  longitude    Float
-  zipCode      String           @default("")
-  country      String           @default("")
-  state        String           @default("")
-  city         String           @default("")
-  neighborhood String           @default("")
-  address      String           @default("")
-  street       String           @default("")
-  number       String           @default("")
-  complement   String?
-  reference    String?
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-  userId       String
-  locationId   String           @default("")
-  user         User             @relation(fields: [userId], references: [id])
-  location     Location?        @relation(fields: [locationId], references: [id])
-  alerts       Alert[]
-  interactions Interaction[]
+  id                      String           @id @default(cuid())
+  title                   String
+  description             String
+  status                  OccurrenceStatus @default(PENDING)
+  imageUrl                String?
+  latitude                Float
+  responsibleOrganization String?          @default("")
+  longitude               Float
+  zipCode                 String           @default("")
+  country                 String           @default("")
+  state                   String           @default("")
+  city                    String           @default("")
+  neighborhood            String           @default("")
+  address                 String           @default("")
+  street                  String           @default("")
+  number                  String           @default("")
+  complement              String?
+  reference               String?
+  createdAt               DateTime         @default(now())
+  updatedAt               DateTime         @updatedAt
+  userId                  String
+  user                    User             @relation(fields: [userId], references: [id])
+  alerts                  Alert[]
+  interactions            Interaction[]
 }
 
 model Alert {
