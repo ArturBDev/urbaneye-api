@@ -116,6 +116,7 @@ export class LocationController {
   @ApiResponse({ status: 404, description: 'Location not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async remove(@Param('id') id: string): Promise<void> {
+    console.log('id', id);
     await this.locationService.remove(id);
   }
 }

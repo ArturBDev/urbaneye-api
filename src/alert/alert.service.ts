@@ -14,7 +14,10 @@ export class AlertService {
         data: createAlertDto,
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to create alert.',
+        error.message,
+      );
     }
   }
 
@@ -22,7 +25,10 @@ export class AlertService {
     try {
       return await this.prisma.alert.findMany();
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to fetch alerts.',
+        error.message,
+      );
     }
   }
 
@@ -34,7 +40,10 @@ export class AlertService {
         },
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to fetch alert.',
+        error.message,
+      );
     }
   }
 
@@ -47,7 +56,10 @@ export class AlertService {
         data: updateAlertDto,
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to update alert.',
+        error.message,
+      );
     }
   }
 
@@ -59,7 +71,10 @@ export class AlertService {
         },
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to delete alert.',
+        error.message,
+      );
     }
   }
 }

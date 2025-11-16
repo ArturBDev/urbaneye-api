@@ -38,7 +38,10 @@ export class UserService {
         data: { ...createUserDto },
       });
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(
+        'Failed to fetch users.',
+        error.message,
+      );
     }
   }
 
@@ -47,7 +50,10 @@ export class UserService {
       const users = await this.prisma.user.findMany();
       return users;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(
+        'Failed to fetch user.',
+        error.message,
+      );
     }
   }
 
@@ -65,7 +71,10 @@ export class UserService {
 
       return user;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(
+        'Failed to fetch user.',
+        error.message,
+      );
     }
   }
 
@@ -81,7 +90,10 @@ export class UserService {
 
       return user;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(
+        'Failed to fetch user by email.',
+        error.message,
+      );
     }
   }
 
@@ -102,7 +114,10 @@ export class UserService {
 
       return user;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(
+        'Failed to update user.',
+        error.message,
+      );
     }
   }
 
@@ -115,7 +130,10 @@ export class UserService {
       });
       return;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(
+        'Failed to delete user.',
+        error.message,
+      );
     }
   }
 }

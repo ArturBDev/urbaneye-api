@@ -16,7 +16,10 @@ export class InteractionService {
         data: createInteractionDto,
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to create interaction.',
+        error.message,
+      );
     }
   }
 
@@ -24,7 +27,10 @@ export class InteractionService {
     try {
       return await this.prisma.interaction.findMany();
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to fetch interactions.',
+        error.message,
+      );
     }
   }
 
@@ -36,7 +42,10 @@ export class InteractionService {
         },
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to fetch interaction.',
+        error.message,
+      );
     }
   }
 
@@ -52,7 +61,10 @@ export class InteractionService {
         data: updateInteractionDto,
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to update interaction.',
+        error.message,
+      );
     }
   }
 
@@ -64,7 +76,10 @@ export class InteractionService {
         },
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to delete interaction.',
+        error.message,
+      );
     }
   }
 }

@@ -14,7 +14,10 @@ export class OccurrenceService {
         data: createOccurrenceDto,
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to create occurrence.',
+        error.message,
+      );
     }
   }
 
@@ -22,7 +25,10 @@ export class OccurrenceService {
     try {
       return await this.prisma.occurrence.findMany();
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to fetch occurrences.',
+        error.message,
+      );
     }
   }
 
@@ -34,7 +40,10 @@ export class OccurrenceService {
         },
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to fetch occurrence.',
+        error.message,
+      );
     }
   }
 
@@ -50,7 +59,10 @@ export class OccurrenceService {
         data: updateOccurrenceDto,
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to update occurrence.',
+        error.message,
+      );
     }
   }
 
@@ -62,7 +74,10 @@ export class OccurrenceService {
         },
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(
+        'Failed to delete occurrence.',
+        error.message,
+      );
     }
   }
 }
