@@ -215,9 +215,11 @@ export class OccurrenceService {
   ): Promise<void> {
     try {
       const occurrence = await this.findOne(occurrenceId);
+
       if (!occurrence) {
         throw new NotFoundException('Occurrence not found');
       }
+
       const interactions = await this.prisma.interaction.findMany({
         where: {
           occurrenceId: occurrenceId,
@@ -228,14 +230,14 @@ export class OccurrenceService {
         interactions.filter(
           (interaction) =>
             interaction.type === InteractionType.SUPPORT &&
-            interaction.createdAt > new Date(Date.now() - LAST_HOUR), // Últimas 2 horas
+            interaction.createdAt > new Date(Date.now() - LAST_HOUR), // Última hora
         )?.length ?? 0;
 
       const disputeInteractionsLength =
         interactions.filter(
           (interaction) =>
             interaction.type === InteractionType.DISPUTE &&
-            interaction.createdAt > new Date(Date.now() - LAST_HOUR), // Últimas 2 horas
+            interaction.createdAt > new Date(Date.now() - LAST_HOUR), // Última hora
         )?.length ?? 0;
 
       if (supportInteractionsLength >= disputeInteractionsLength) {
