@@ -20,6 +20,9 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 @Controller('user')
 export class UserController {
@@ -50,10 +53,11 @@ export class UserController {
     return await this.userService.create(createUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @Get()
   @ApiOperation({ summary: 'Get all users' })
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiResponse({
     status: 200,
     description: 'The users have been successfully retrieved.',
@@ -65,7 +69,8 @@ export class UserController {
     return await this.userService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth()
   @Get(':id')
   @ApiParam({ name: 'id', type: String, description: 'The id of the user' })
@@ -82,7 +87,8 @@ export class UserController {
     return await this.userService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth()
   @Patch(':id')
   @ApiParam({ name: 'id', type: String, description: 'The id of the user' })
@@ -104,7 +110,8 @@ export class UserController {
     return await this.userService.update(id, updateUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth()
   @Delete(':id')
   @ApiParam({ name: 'id', type: String, description: 'The id of the user' })

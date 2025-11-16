@@ -17,10 +17,16 @@ datasource db {
 // ENUMS
 // ----------------------------------------------------
 
-enum UserRole {
+enum UserType {
   CITIZEN
   PUBLIC_AGENCY
   COMPANY
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
 }
 
 enum OccurrenceStatus {
@@ -67,7 +73,7 @@ model User {
   complement     String?
   reference      String?
   profilePicture String?
-  role           UserRole
+  type           UserType
   createdAt      DateTime      @default(now())
   occurrences    Occurrence[]
   interactions   Interaction[]

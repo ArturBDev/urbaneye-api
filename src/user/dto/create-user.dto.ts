@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserRole } from '@prisma/client';
+import { UserType } from '@prisma/client';
 import {
   IsString,
   IsNotEmpty,
@@ -26,10 +26,10 @@ export class CreateUserDto {
   @ApiProperty()
   @MinLength(8)
   passwordHash: string;
-  @IsEnum(UserRole)
+  @IsEnum(UserType)
   @IsNotEmpty()
   @ApiProperty()
-  role: UserRole;
+  type: UserType;
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
