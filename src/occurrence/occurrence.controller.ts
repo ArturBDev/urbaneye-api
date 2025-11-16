@@ -2,11 +2,13 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Patch,
+  Body,
   Param,
-  Delete,
   UseGuards,
+  Query,
+  ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
 import { OccurrenceService } from './occurrence.service';
 import { CreateOccurrenceDto } from './dto/create-occurrence.dto';
@@ -17,12 +19,15 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
 } from '@nestjs/swagger';
 import { Occurrence } from './entities/occurrence.entity';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
-import { UserRole } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
+import { OccurrenceFiltersDto } from './dto/occurrence-filters.dto';
+import { CurrentUser } from 'src/auth/current-user.decorator';
 
 @Controller('occurrence')
 export class OccurrenceController {
@@ -86,7 +91,7 @@ export class OccurrenceController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.SUPER_ADMIN)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER)
   @ApiBearerAuth()
   @Patch(':id')
   @ApiOperation({ summary: 'Update an occurrence' })
@@ -107,14 +112,23 @@ export class OccurrenceController {
   async update(
     @Param('id') id: string,
     @Body() updateOccurrenceDto: UpdateOccurrenceDto,
+    @CurrentUser() currentUser: User,
   ): Promise<Occurrence> {
+    const occurrence = await this.occurrenceService.findOne(id);
+    if (!occurrence) {
+      throw new NotFoundException('Occurrence not found');
+    }
+    if (
+      currentUser.id !== occurrence.userId &&
+      currentUser.role !== UserRole.SUPER_ADMIN &&
+      currentUser.role !== UserRole.ADMIN
+    ) {
+      throw new ForbiddenException(
+        'You are not authorized to access this resource',
+      );
+    }
     return await this.occurrenceService.update(id, updateOccurrenceDto);
   }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.SUPER_ADMIN)
-  @ApiBearerAuth()
-  @Delete(':id')
   @ApiOperation({ summary: 'Delete an occurrence' })
   @ApiParam({
     name: 'id',
@@ -125,7 +139,103 @@ export class OccurrenceController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Occurrence not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
-  async remove(@Param('id') id: string): Promise<void> {
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER)
+  @ApiBearerAuth()
+  async remove(
+    @Param('id') id: string,
+    @CurrentUser() currentUser: User,
+  ): Promise<void> {
+    const occurrence = await this.occurrenceService.findOne(id);
+    if (!occurrence) {
+      throw new NotFoundException('Occurrence not found');
+    }
+    if (
+      currentUser.id !== occurrence.userId &&
+      currentUser.role !== UserRole.SUPER_ADMIN &&
+      currentUser.role !== UserRole.ADMIN
+    ) {
+      throw new ForbiddenException(
+        'You are not authorized to access this resource',
+      );
+    }
     await this.occurrenceService.remove(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER)
+  @ApiBearerAuth()
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Get occurrences by user id' })
+  @ApiParam({ name: 'userId', type: String })
+  @ApiResponse({
+    status: 200,
+    description: 'Occurrences retrieved successfully',
+    type: [Occurrence],
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async getOccurrencesByUser(
+    @Param('userId') userId: string,
+    @CurrentUser() currentUser: User,
+  ): Promise<Occurrence[]> {
+    if (
+      currentUser.id !== userId &&
+      currentUser.role !== UserRole.SUPER_ADMIN &&
+      currentUser.role !== UserRole.ADMIN
+    ) {
+      throw new ForbiddenException(
+        'You are not authorized to access this resource',
+      );
+    }
+    return await this.occurrenceService.getOccurrencesByUser(userId);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER)
+  @ApiBearerAuth()
+  @Get('filters')
+  @ApiOperation({ summary: 'Get occurrences by filters' })
+  @ApiBody({ type: OccurrenceFiltersDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Occurrences retrieved successfully',
+    type: [Occurrence],
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async getOccurrencesByFilters(
+    @Query() occurrenceFiltersDto: OccurrenceFiltersDto,
+  ): Promise<Occurrence[]> {
+    return await this.occurrenceService.getOccurrencesByFilters(
+      occurrenceFiltersDto,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER)
+  @ApiBearerAuth()
+  @Get('location')
+  @ApiOperation({ summary: 'Get occurrences by location' })
+  @ApiQuery({ name: 'latitude', type: Number })
+  @ApiQuery({ name: 'longitude', type: Number })
+  @ApiQuery({ name: 'radius', type: Number })
+  @ApiResponse({
+    status: 200,
+    description: 'Occurrences retrieved successfully',
+    type: [Occurrence],
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async getOccurrencesByLocation(
+    @Query() latitude: number,
+    @Query() longitude: number,
+    @Query() radius: number,
+  ): Promise<Occurrence[]> {
+    return await this.occurrenceService.getOccurrencesByLocation(
+      latitude,
+      longitude,
+      radius,
+    );
   }
 }

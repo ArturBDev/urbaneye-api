@@ -31,9 +31,10 @@ enum UserRole {
 
 enum OccurrenceStatus {
   PENDING
-  VALIDATED
-  RESOLVED
-  IGNORED
+  REJECTED
+  APPROVED
+  CANCELLED
+  CLOSED
 }
 
 enum AlertType {
@@ -51,6 +52,21 @@ enum AlertLevel {
 enum InteractionType {
   SUPPORT
   DISPUTE
+}
+
+enum OccurrenceType {
+  FLOODING
+  FIRE
+  ELECTRICITY
+  TRAFFIC_CONGESTION
+  TRAFFIC_LIGHT_OUTAGE
+  ROAD_BLOCKAGE
+  ROAD_ACCIDENT
+  ROAD_CONSTRUCTION
+  ROAD_MAINTENANCE
+  ROAD_SIGNALING
+  THEFT
+  OTHER
 }
 
 // ----------------------------------------------------
@@ -95,6 +111,7 @@ model Occurrence {
   title                   String
   description             String
   status                  OccurrenceStatus @default(PENDING)
+  occurrenceType          OccurrenceType   @default(OTHER)
   imageUrl                String?
   latitude                Float
   responsibleOrganization String?          @default("")

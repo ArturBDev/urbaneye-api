@@ -94,6 +94,7 @@ async function main() {
       number: '1578',
       complement: 'Next to Wallig',
       reference: 'Near the Wallig',
+      occurrenceType: 'FLOODING',
     },
     update: {
       title: 'Flooding on Main Street',
@@ -113,6 +114,7 @@ async function main() {
       number: '1578',
       complement: 'Next to Wallig',
       reference: 'Near the Wallig',
+      occurrenceType: 'FLOODING',
     },
   });
 
