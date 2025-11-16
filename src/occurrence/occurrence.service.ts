@@ -274,4 +274,25 @@ export class OccurrenceService {
       );
     }
   }
+
+  async reactToOccurrence(
+    occurrenceId: string,
+    reaction: InteractionType,
+    userId: string,
+  ): Promise<void> {
+    try {
+      await this.prisma.interaction.upsert({
+        where: {
+          userId_occurrenceId: { userId: userId, occurrenceId: occurrenceId },
+        },
+        create: { type: reaction, userId: userId, occurrenceId: occurrenceId },
+        update: { type: reaction },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to react to occurrence.',
+        error.message,
+      );
+    }
+  }
 }

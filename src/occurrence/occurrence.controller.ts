@@ -25,7 +25,12 @@ import {
 import { Occurrence } from './entities/occurrence.entity';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
-import { OccurrenceStatus, User, UserRole } from '@prisma/client';
+import {
+  InteractionType,
+  OccurrenceStatus,
+  User,
+  UserRole,
+} from '@prisma/client';
 import { OccurrenceFiltersDto } from './dto/occurrence-filters.dto';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 
@@ -272,6 +277,32 @@ export class OccurrenceController {
     await this.occurrenceService.occurrenceReview(
       id,
       occurrenceReviewDto.status as OccurrenceStatus,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER)
+  @ApiBearerAuth()
+  @Post('react/:id/:reaction')
+  @ApiOperation({ summary: 'React to an occurrence' })
+  @ApiParam({ name: 'id', type: String })
+  @ApiParam({ name: 'reaction', type: 'enum', enum: InteractionType })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Occurrence not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({
+    status: 201,
+    description: 'Occurrence reacted successfully',
+  })
+  async reactToOccurrence(
+    @Param('id') id: string,
+    @Param('reaction') reaction: InteractionType,
+    @CurrentUser() currentUser: User,
+  ): Promise<void> {
+    await this.occurrenceService.reactToOccurrence(
+      id,
+      reaction,
+      currentUser.id,
     );
   }
 }
