@@ -60,12 +60,18 @@ async function main() {
       longitude: 10,
       userId: user.id,
       locationId: location.id,
+      address: 'Address 1',
+      status: 'PENDING',
+      imageUrl: 'https://example.com/image.jpg',
     },
     update: {
       title: 'Occurrence 1',
       description: 'Description 1',
       latitude: 10,
       longitude: 10,
+      address: 'Address 1',
+      status: 'PENDING',
+      imageUrl: 'https://example.com/image.jpg',
     },
   });
 

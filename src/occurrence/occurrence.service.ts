@@ -1,44 +1,68 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateOccurrenceDto } from './dto/create-occurrence.dto';
 import { UpdateOccurrenceDto } from './dto/update-occurrence.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Occurrence } from './entities/occurrence.entity';
 
 @Injectable()
 export class OccurrenceService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createOccurrenceDto: CreateOccurrenceDto) {
-    return this.prisma.occurrence.create({
-      data: createOccurrenceDto,
-    });
+  async create(createOccurrenceDto: CreateOccurrenceDto): Promise<Occurrence> {
+    try {
+      return await this.prisma.occurrence.create({
+        data: createOccurrenceDto,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  findAll() {
-    return this.prisma.occurrence.findMany();
+  async findAll(): Promise<Occurrence[]> {
+    try {
+      return await this.prisma.occurrence.findMany();
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  findOne(id: string) {
-    return this.prisma.occurrence.findUniqueOrThrow({
-      where: {
-        id: id,
-      },
-    });
+  async findOne(id: string): Promise<Occurrence> {
+    try {
+      return await this.prisma.occurrence.findUniqueOrThrow({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  update(id: string, updateOccurrenceDto: UpdateOccurrenceDto) {
-    return this.prisma.occurrence.update({
-      where: {
-        id: id,
-      },
-      data: updateOccurrenceDto,
-    });
+  async update(
+    id: string,
+    updateOccurrenceDto: UpdateOccurrenceDto,
+  ): Promise<Occurrence> {
+    try {
+      return await this.prisma.occurrence.update({
+        where: {
+          id: id,
+        },
+        data: updateOccurrenceDto,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  remove(id: string) {
-    return this.prisma.occurrence.delete({
-      where: {
-        id: id,
-      },
-    });
+  async remove(id: string): Promise<void> {
+    try {
+      await this.prisma.occurrence.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }
