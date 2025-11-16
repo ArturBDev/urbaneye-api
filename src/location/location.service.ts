@@ -1,44 +1,66 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateLocationDto } from './dto/create-location.dto';
-import { UpdateLocationDto } from './dto/update-location.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Location } from './entities/location.entity';
+import { UpdateLocationDto } from './dto/update-location.dto';
 
 @Injectable()
 export class LocationService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createLocationDto: CreateLocationDto) {
-    return this.prisma.location.create({
-      data: createLocationDto,
-    });
+  async create(createLocationDto: CreateLocationDto): Promise<Location> {
+    try {
+      return await this.prisma.location.create({
+        data: createLocationDto,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  findAll() {
-    return this.prisma.location.findMany();
+  async findAll(): Promise<Location[]> {
+    try {
+      return await this.prisma.location.findMany();
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  findOne(id: string) {
-    return this.prisma.location.findUniqueOrThrow({
-      where: {
-        id: id,
-      },
-    });
+  async findOne(id: string): Promise<Location> {
+    try {
+      return await this.prisma.location.findUniqueOrThrow({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  update(id: string, updateLocationDto: UpdateLocationDto) {
-    return this.prisma.location.update({
-      where: {
-        id: id,
-      },
-      data: updateLocationDto,
-    });
+  async update(
+    id: string,
+    updateLocationDto: UpdateLocationDto,
+  ): Promise<Location> {
+    try {
+      return await this.prisma.location.update({
+        where: { id },
+        data: updateLocationDto,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  remove(id: string) {
-    return this.prisma.location.delete({
-      where: {
-        id: id,
-      },
-    });
+  async remove(id: string): Promise<void> {
+    try {
+      await this.prisma.location.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }

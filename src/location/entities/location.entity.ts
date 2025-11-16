@@ -1,5 +1,3 @@
-import { Occurrence } from '@prisma/client';
-
 export class Location {
   id: string;
   name: string;
@@ -8,5 +6,4 @@ export class Location {
   state: string;
   latitude: number;
   longitude: number;
-  occurrences: Occurrence[];
 }

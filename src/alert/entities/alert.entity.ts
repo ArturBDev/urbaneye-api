@@ -2,6 +2,7 @@ import { AlertType } from '@prisma/client';
 import { AlertLevel } from '@prisma/client';
 
 export class Alert {
+  id: string;
   title: string;
   description: string;
   type: AlertType;

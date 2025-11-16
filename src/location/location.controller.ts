@@ -13,44 +13,46 @@ import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
-
+import { Location } from './entities/location.entity';
 @Controller('location')
 export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 
   @Post()
-  create(@Body() createLocationDto: CreateLocationDto) {
-    return this.locationService.create(createLocationDto);
+  async create(
+    @Body() createLocationDto: CreateLocationDto,
+  ): Promise<Location> {
+    return await this.locationService.create(createLocationDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get()
-  findAll() {
-    return this.locationService.findAll();
+  async findAll(): Promise<Location[]> {
+    return await this.locationService.findAll();
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.locationService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<Location> {
+    return await this.locationService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateLocationDto: UpdateLocationDto,
-  ) {
-    return this.locationService.update(id, updateLocationDto);
+  ): Promise<Location> {
+    return await this.locationService.update(id, updateLocationDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.locationService.remove(id);
+  async remove(@Param('id') id: string): Promise<void> {
+    await this.locationService.remove(id);
   }
 }
