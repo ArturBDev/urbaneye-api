@@ -9,7 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { User } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
 export const roundsOfHashing = 10;
 
 @Injectable()
@@ -132,6 +132,20 @@ export class UserService {
     } catch (error) {
       throw new InternalServerErrorException(
         'Failed to delete user.',
+        error.message,
+      );
+    }
+  }
+
+  async updateUserRole(userId: string, role: UserRole): Promise<void> {
+    try {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { role: role },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to update user role.',
         error.message,
       );
     }

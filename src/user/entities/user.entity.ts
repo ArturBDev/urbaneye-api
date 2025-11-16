@@ -1,4 +1,4 @@
-import { UserType } from '@prisma/client';
+import { UserRole, UserType } from '@prisma/client';
 
 export class User {
   id: string;
@@ -6,6 +6,7 @@ export class User {
   email: string;
   passwordHash: string;
   type: UserType;
+  role: UserRole;
   createdAt: Date;
   phoneNumber: string;
   zipCode: string;
