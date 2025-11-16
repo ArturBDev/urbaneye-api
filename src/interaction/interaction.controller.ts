@@ -36,6 +36,7 @@ export class InteractionController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 409, description: 'Interaction already exists.' })
+  @ApiOperation({ summary: 'Create a new interaction' })
   async create(
     @Body() createInteractionDto: CreateInteractionDto,
   ): Promise<Interaction> {
