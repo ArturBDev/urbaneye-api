@@ -1,44 +1,65 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateAlertDto } from './dto/create-alert.dto';
 import { UpdateAlertDto } from './dto/update-alert.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Alert } from './entities/alert.entity';
 
 @Injectable()
 export class AlertService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createAlertDto: CreateAlertDto) {
-    return this.prisma.alert.create({
-      data: createAlertDto,
-    });
+  async create(createAlertDto: CreateAlertDto): Promise<Alert> {
+    try {
+      return await this.prisma.alert.create({
+        data: createAlertDto,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  findAll() {
-    return this.prisma.alert.findMany();
+  async findAll(): Promise<Alert[]> {
+    try {
+      return await this.prisma.alert.findMany();
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  findOne(id: string) {
-    return this.prisma.alert.findUniqueOrThrow({
-      where: {
-        id: id,
-      },
-    });
+  async findOne(id: string): Promise<Alert> {
+    try {
+      return await this.prisma.alert.findUniqueOrThrow({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  update(id: string, updateAlertDto: UpdateAlertDto) {
-    return this.prisma.alert.update({
-      where: {
-        id: id,
-      },
-      data: updateAlertDto,
-    });
+  async update(id: string, updateAlertDto: UpdateAlertDto): Promise<Alert> {
+    try {
+      return await this.prisma.alert.update({
+        where: {
+          id: id,
+        },
+        data: updateAlertDto,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  remove(id: string) {
-    return this.prisma.alert.delete({
-      where: {
-        id: id,
-      },
-    });
+  async remove(id: string): Promise<void> {
+    try {
+      await this.prisma.alert.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }
