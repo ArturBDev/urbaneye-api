@@ -1,7 +1,17 @@
 //src/auth/entities/auth.entity.ts
-import { User } from '@prisma/client';
+import { UserRole, UserType } from '@prisma/client';
 
 export class AuthEntity {
   accessToken: string;
-  user: User;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    type: UserType;
+    role: UserRole;
+    createdAt: Date;
+    phoneNumber: string;
+    zipCode: string;
+    profilePicture: string;
+  };
 }
