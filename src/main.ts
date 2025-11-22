@@ -2,11 +2,25 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 // Define the bootstrap function
 async function bootstrap() {
   // Create a NestJS application instance by passing the AppModule to the NestFactory
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  
+  // Increase body size limit for image uploads (default is 1MB, setting to 10MB)
+  app.use(require('express').json({ limit: '10mb' }));
+  app.use(require('express').urlencoded({ limit: '10mb', extended: true }));
+  
+  // Serve static files from uploads directory
+  // Use process.cwd() to match where files are saved
+  const uploadsDir = join(process.cwd(), 'uploads');
+  app.useStaticAssets(uploadsDir, {
+    prefix: '/uploads/',
+  });
+  console.log('Serving static files from:', uploadsDir);
 
   app.useGlobalPipes(
     new ValidationPipe({

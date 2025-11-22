@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { OccurrenceStatus } from '@prisma/client';
+import { OccurrenceStatus, OccurrenceType } from '@prisma/client';
 import {
   IsEnum,
   IsNotEmpty,
@@ -41,6 +41,10 @@ export class CreateOccurrenceDto {
   @IsNotEmpty()
   @ApiProperty()
   status: OccurrenceStatus;
+  @IsEnum(OccurrenceType)
+  @IsOptional()
+  @ApiProperty()
+  occurrenceType?: OccurrenceType;
   @IsString()
   @IsOptional()
   @ApiProperty()

@@ -1,17 +1,7 @@
 //src/auth/entities/auth.entity.ts
-import { UserRole, UserType } from '@prisma/client';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class AuthEntity {
+  @ApiProperty()
   accessToken: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    type: UserType;
-    role: UserRole;
-    createdAt: Date;
-    phoneNumber: string;
-    zipCode: string;
-    profilePicture: string;
-  };
 }
