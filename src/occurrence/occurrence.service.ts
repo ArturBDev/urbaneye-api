@@ -9,6 +9,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Occurrence } from './entities/occurrence.entity';
 import { OccurrenceFiltersDto } from './dto/occurrence-filters.dto';
 import { InteractionType, OccurrenceStatus } from '@prisma/client';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const LAST_HOUR = 1 * 60 * 60 * 1000;
 
@@ -37,6 +39,9 @@ export class OccurrenceService {
             in: [OccurrenceStatus.APPROVED, OccurrenceStatus.PENDING],
           },
         },
+        include: {
+          interactions: true,
+        },
       });
     } catch (error) {
       throw new InternalServerErrorException(
@@ -48,12 +53,22 @@ export class OccurrenceService {
 
   async findOne(id: string): Promise<Occurrence> {
     try {
-      return await this.prisma.occurrence.findUniqueOrThrow({
+      const occurrence = await this.prisma.occurrence.findUnique({
         where: {
           id: id,
         },
       });
+
+      if (!occurrence) {
+        throw new NotFoundException('Occurrence not found');
+      }
+
+      return occurrence;
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
       throw new InternalServerErrorException(
         'Failed to fetch occurrence.',
         error.message,
@@ -100,6 +115,9 @@ export class OccurrenceService {
       return await this.prisma.occurrence.findMany({
         where: {
           userId: userId,
+        },
+        include: {
+          interactions: true,
         },
       });
     } catch (error) {
@@ -179,6 +197,9 @@ export class OccurrenceService {
                   : new Date(new Date().setDate(new Date().getDate() + 1)),
               }
             : undefined,
+        },
+        include: {
+          interactions: true,
         },
       });
     } catch (error) {
@@ -293,6 +314,59 @@ export class OccurrenceService {
     } catch (error) {
       throw new InternalServerErrorException(
         'Failed to react to occurrence.',
+        error.message,
+      );
+    }
+  }
+
+  async removeReaction(
+    occurrenceId: string,
+    userId: string,
+  ): Promise<void> {
+    try {
+      await this.prisma.interaction.delete({
+        where: {
+          userId_occurrenceId: { userId: userId, occurrenceId: occurrenceId },
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to remove reaction from occurrence.',
+        error.message,
+      );
+    }
+  }
+
+  async uploadImage(base64Image: string): Promise<string> {
+    try {
+      // Remove data URL prefix if present (e.g., "data:image/jpeg;base64,")
+      const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '');
+      const imageBuffer = Buffer.from(base64Data, 'base64');
+
+      // Create uploads directory if it doesn't exist
+      const uploadsDir = path.join(process.cwd(), 'uploads');
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+        console.log('Created uploads directory:', uploadsDir);
+      }
+
+      // Generate unique filename
+      const filename = `${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
+      const filepath = path.join(uploadsDir, filename);
+
+      // Save file
+      fs.writeFileSync(filepath, imageBuffer);
+      console.log('Image saved to:', filepath);
+
+      // Return URL (adjust base URL as needed)
+      const baseURL = process.env.BASE_URL || 'http://localhost:3000';
+      const imageUrl = `${baseURL}/uploads/${filename}`;
+      console.log('Image URL:', imageUrl);
+      return imageUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw new InternalServerErrorException(
+        'Failed to upload image.',
         error.message,
       );
     }

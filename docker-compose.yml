@@ -9,6 +9,10 @@ services:
       - postgres
     environment:
       - DATABASE_URL=postgresql://urbaneye:urbaneye123@postgres:5432/urbaneye
+      - JWT_SECRET=supersecretkey
+    volumes:
+      - .:/app
+      - /app/node_modules
     restart: always
   postgres:
     image: postgres:13.5

@@ -3,12 +3,14 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Body,
   Param,
   UseGuards,
   Query,
   ForbiddenException,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { OccurrenceService } from './occurrence.service';
 import { CreateOccurrenceDto } from './dto/create-occurrence.dto';
@@ -188,7 +190,7 @@ export class OccurrenceController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER)
   @ApiBearerAuth()
-  @Get('filters')
+  @Get('filters/search')
   @ApiOperation({ summary: 'Get occurrences by filters' })
   @ApiBody({ type: OccurrenceFiltersDto })
   @ApiResponse({
@@ -293,5 +295,67 @@ export class OccurrenceController {
       reaction,
       currentUser.id,
     );
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER)
+  @ApiBearerAuth()
+  @Delete('react/:id')
+  @ApiOperation({ summary: 'Remove reaction from an occurrence' })
+  @ApiParam({ name: 'id', type: String })
+  @ApiResponse({ status: 200, description: 'Reaction removed successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Occurrence not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async removeReaction(
+    @Param('id') id: string,
+    @CurrentUser() currentUser: User,
+  ): Promise<void> {
+    await this.occurrenceService.removeReaction(id, currentUser.id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER)
+  @ApiBearerAuth()
+  @Post('upload-image')
+  @ApiOperation({ summary: 'Upload an image for an occurrence' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary',
+          description: 'Base64 encoded image',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Image uploaded successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        imageUrl: { type: 'string' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async uploadImage(
+    @Body() body: { image: string },
+  ): Promise<{ imageUrl: string }> {
+    if (!body.image) {
+      throw new BadRequestException('Image is required');
+    }
+
+    try {
+      const imageUrl = await this.occurrenceService.uploadImage(body.image);
+      return { imageUrl };
+    } catch (error) {
+      throw new BadRequestException('Failed to upload image: ' + error.message);
+    }
   }
 }
